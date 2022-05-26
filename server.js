@@ -3,7 +3,6 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const cors = require('koa2-cors');
 const koaBody = require('koa-body');
-
 const app = new Koa();
 app.use(cors());
 app.use(koaBody({ json: true }));
@@ -19,11 +18,16 @@ const services = [
 const router = new Router();
 
 function fortune(ctx, body = null, status = 200) {
+    console.log("запрос пришол");
+
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             if (Math.random() > 0) { //0.25
                 ctx.response.status = status;
                 ctx.response.body = body;
+                ctx.response.set({
+                    'Access-Control-Allow-Origin': '*',
+                  });
                 resolve();
                 return;
             }
@@ -73,7 +77,6 @@ router.delete('/api/services/:id', async (ctx, next) => {
     }
     services.splice(index, 1);
     const status = 200;
-    // console.log(ctx.response)
     return fortune(ctx, services, status);
 });
 
